@@ -1,0 +1,44 @@
+From e6faacdeaf0a36274929b9c15a7df8065ed75c8d Mon Sep 17 00:00:00 2001
+From: Lorenzo Pirritano <lpirritano@anaconda.com>
+Date: Tue, 3 Sep 2024 15:45:00 +0200
+Subject: [PATCH 1/2] fix dependencies
+
+---
+ pyproject.toml | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+index 308b249..1dabedd 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -7,9 +7,10 @@ authors = [
+   { name="Idan Morad", email="idanmorad.arthas@gmail.com" },
+ ]
+ name = "data_science_utils"
+-dynamic = ["version"]
++dynamic = ["version", "dependencies"]
+ description = "This project is an ensemble of methods which are frequently used in python Data Science projects."
+ license = {file = "LICENSE"}
++requires-python = ">=3.9"
+ readme = "README.md"
+ classifiers = [
+     "Development Status :: 5 - Production/Stable",
+@@ -32,12 +33,9 @@ Issues = "https://github.com/idanmoradarthas/DataScienceUtils/issues"
+ Repository = "https://github.com/idanmoradarthas/DataScienceUtils.git"
+ Changelog = "https://github.com/idanmoradarthas/DataScienceUtils/blob/master/CHANGELOG.md"
+ 
+-[tool.peotry.dependencies]
+-python = ">=3.9"
+-file = "requirements.txt"
+-
+ [tool.setuptools]
+ packages = ["ds_utils"]
+ 
+ [tool.setuptools.dynamic]
+-version = {attr = "ds_utils.__version__"}
+\ No newline at end of file
++version = {attr = "ds_utils.__version__"}
++dependencies = {file = ["requirements.txt"]}
+-- 
+2.39.1
+

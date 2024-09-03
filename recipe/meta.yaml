@@ -1,0 +1,83 @@
+{% set name = "data-science-utils" %}
+{% set version = "1.7.3" %}
+{% set commit_id = "0f8c334e834d00572eebb64ff62f30d0d06399c3" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  - url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/data_science_utils-{{ version }}.tar.gz
+    sha256: f8fed3cc251d3cbac1b53f0c7e091b3db7f698df97d753656683d8bdd9002664
+    patches:
+      - patches/0001-fix-dependencies.patch
+      - patches/0002-get_xticks-returns-list.patch
+  # tests and tests data files
+  - url: https://github.com/idanmoradarthas/DataScienceUtils/archive/{{ commit_id }}.tar.gz
+    sha256: 39b51f51b595ea55d1d67a2f2a2c307da431ef121a3e310a4c5f5527bbe531d5
+    folder: gh_src
+
+build:
+  skip: true  # [py<39]
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+  number: 0
+
+requirements:
+  build:
+    - patch     # [not win]
+    - m2-patch  # [win]
+  host:
+    - python
+    - setuptools >=69.0.3
+    - wheel >=0.41.2
+    - pip
+  run:
+    - python
+    # see requirements.txt and patch
+    # to fix dependencies
+    - numpy >=1.26.3
+    - scipy >=1.11.4
+    - pandas >=2.1.4
+    - matplotlib >=3.8.0
+    - seaborn >=0.12.2
+    - scikit-learn >=1.2.2
+    - pydotplus >=2.0.2
+    - joblib >=1.2.0
+
+{% set tests_to_skip = "" %}
+# skip test_plot_loss_vs_cluster_number_given_parameters because 
+# uses "algorithm": "full" (instead of "elkan" or "lloyd")
+{% set tests_to_skip = tests_to_skip + " test_plot_loss_vs_cluster_number_given_parameters" %}
+# skip a few tests test_print_decision_paths* because the snapshot assert
+# has some approximation errors in results
+{% set tests_to_skip = tests_to_skip + " or test_print_decision_paths" %}
+
+test:
+  imports:
+    - ds_utils
+    - ds_utils.metrics
+  requires:
+    - pip
+    - pytest
+  source_files:
+    - gh_src/tests
+  commands:
+    - pip check
+    - cd gh_src
+    # ignore tests/test_version.py because tests wrong version
+    - pytest -v tests --ignore=tests/test_version.py -k "not ({{ tests_to_skip }})"
+about:
+  home: https://github.com/idanmoradarthas/DataScienceUtils
+  license: MIT
+  license_file: LICENSE
+  license_family: MIT
+  summary: Data science common method for python.
+  description: |
+    This project is an ensemble of methods 
+    which are frequently used in python Data Science projects.
+  doc_url: https://datascienceutils.readthedocs.io
+  dev_url: https://github.com/idanmoradarthas/DataScienceUtils
+
+extra:
+  recipe-maintainers:
+    - lorepirri

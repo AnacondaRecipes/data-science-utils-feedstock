@@ -1,0 +1,25 @@
+From 3b3a99c73bbf9ffd66780ce05f07bacdacb3deab Mon Sep 17 00:00:00 2001
+From: Lorenzo Pirritano <lpirritano@anaconda.com>
+Date: Tue, 3 Sep 2024 16:34:17 +0200
+Subject: [PATCH 2/2] get_xticks returns list
+
+---
+ ds_utils/preprocess.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ds_utils/preprocess.py b/ds_utils/preprocess.py
+index 97bdeff..0879272 100644
+--- a/ds_utils/preprocess.py
++++ b/ds_utils/preprocess.py
+@@ -49,7 +49,7 @@ def visualize_feature(series: pd.Series, remove_na: bool = False, *, ax: Optiona
+         ax.set_title(f"{feature_series.name} ({feature_series.dtype})")
+         ax.set_xlabel("")
+ 
+-    ticks_loc = ax.get_xticks().tolist()
++    ticks_loc = ax.get_xticks()
+     ax.xaxis.set_major_locator(ticker.FixedLocator(ticks_loc))
+     ax.set_xticklabels(labels, rotation=45, horizontalalignment='right')
+ 
+-- 
+2.39.1
+
