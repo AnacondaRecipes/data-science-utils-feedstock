@@ -43,6 +43,9 @@ requirements:
     - scikit-learn >=1.2.2
     - pydotplus >=2.0.2
     - joblib >=1.2.0
+  run_constrained:
+    # mkl variant pulls in intel-openmp which conflicts with llvm-openmp. i.e. force to use openblas variant of numpy, scipy, etc.
+    - blas=*=openblas  # [osx and x86_64]
 
 {% set tests_to_skip = "" %}
 # skip test_plot_loss_vs_cluster_number_given_parameters because 
