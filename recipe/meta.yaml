@@ -54,6 +54,7 @@ requirements:
 # but the order of the words is different.
 {% set tests_to_skip = tests_to_skip + " test_significant_terms" %}  # [linux and x86_64]
 
+
 test:
   imports:
     - ds_utils
@@ -67,7 +68,8 @@ test:
     - pip check
     - cd gh_src
     # ignore tests/test_version.py because tests wrong version
-    - pytest -v tests --ignore=tests/test_version.py -k "not ({{ tests_to_skip }})"
+    - pytest -v tests --ignore=tests/test_version.py  # [not (linux and x86_64)]
+    - pytest -v tests --ignore=tests/test_version.py -k "not test_significant_terms"  # [linux and x86_64]
 
 about:
   home: https://github.com/idanmoradarthas/DataScienceUtils
