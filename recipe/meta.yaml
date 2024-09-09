@@ -16,6 +16,8 @@ source:
   - url: https://github.com/idanmoradarthas/DataScienceUtils/archive/{{ commit_id }}.tar.gz
     sha256: 39b51f51b595ea55d1d67a2f2a2c307da431ef121a3e310a4c5f5527bbe531d5
     folder: gh_src
+    patches:
+      - patches/0003-fix-tests.patch
 
 build:
   skip: true  # [py<39]
@@ -48,15 +50,9 @@ requirements:
     - blas=*=openblas  # [osx and x86_64]
 
 {% set tests_to_skip = "" %}
-# skip test_plot_loss_vs_cluster_number_given_parameters because 
-# uses "algorithm": "full" (instead of "elkan" or "lloyd")
-{% set tests_to_skip = tests_to_skip + " test_plot_loss_vs_cluster_number_given_parameters" %}
-# skip a few tests test_print_decision_paths* because the snapshot assert
-# has some approximation errors in results
-{% set tests_to_skip = tests_to_skip + " or test_print_decision_paths" %}
 # skip test_significant_terms on linux-64 because the set is the same
 # but the order of the words is different.
-{% set tests_to_skip = tests_to_skip + " or test_significant_terms" %}  # [linux and x86_64]
+{% set tests_to_skip = tests_to_skip + " test_significant_terms" %}  # [linux and x86_64]
 
 test:
   imports:
@@ -72,6 +68,7 @@ test:
     - cd gh_src
     # ignore tests/test_version.py because tests wrong version
     - pytest -v tests --ignore=tests/test_version.py -k "not ({{ tests_to_skip }})"
+
 about:
   home: https://github.com/idanmoradarthas/DataScienceUtils
   license: MIT
