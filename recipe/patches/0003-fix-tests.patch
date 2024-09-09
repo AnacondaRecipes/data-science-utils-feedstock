@@ -1,0 +1,130 @@
+From 74c323e828938603b505a2f85921277fb47032df Mon Sep 17 00:00:00 2001
+From: "idan.morad" <idanmorad.arthas@gmail.com>
+Date: Wed, 4 Sep 2024 20:54:27 +0300
+Subject: [PATCH] * Fixed get_ticks() to list if matplotlib version is less
+ than 3.8.4 * Fixed some tests * Update supporting packages version * Update
+ version
+
+This is a PARTIAL patch extracted from the PR
+at https://github.com/idanmoradarthas/DataScienceUtils/pull/36
+
+---
+ tests/test_unsupervised.py |  2 +-
+ tests/test_version.py      |  2 +-
+ tests/test_xai.py          | 32 ++++++++++++++++----------------
+
+diff --git a/tests/test_unsupervised.py b/tests/test_unsupervised.py
+index e64b23f..1ce0b4e 100644
+--- a/tests/test_unsupervised.py
++++ b/tests/test_unsupervised.py
+@@ -164,7 +164,7 @@ def test_plot_loss_vs_cluster_number_exist_ax():
+ 
+ def test_plot_loss_vs_cluster_number_given_parameters():
+     plot_loss_vs_cluster_number(iris_x.values, 3, 20, euclidean,
+-                                algorithm_parameters={"random_state": 42, "algorithm": "full"})
++                                algorithm_parameters={"random_state": 42, "algorithm": "lloyd"})
+ 
+     result_path = Path(__file__).parents[0].absolute().joinpath("result_images").joinpath(
+         "test_unsupervised").joinpath("test_plot_loss_vs_cluster_number_given_parameters.png")
+diff --git a/tests/test_version.py b/tests/test_version.py
+index 6d695a0..6ba05d5 100644
+--- a/tests/test_version.py
++++ b/tests/test_version.py
+@@ -2,4 +2,4 @@
+ 
+ 
+ def test_version():
+-    assert ds_utils.__version__ == "1.7.2"
++    assert ds_utils.__version__ == "1.7.4"
+diff --git a/tests/test_xai.py b/tests/test_xai.py
+index 2f95c28..0d6efb6 100644
+--- a/tests/test_xai.py
++++ b/tests/test_xai.py
+@@ -30,8 +30,8 @@ def test_print_decision_paths():
+ 
+     expected = 'def iris_tree(petal width (cm), petal length (cm)):' + os.linesep + \
+                '  if petal width (cm) <= 0.8000:' + os.linesep + \
+-               '    # return class setosa with probability 0.9804' + os.linesep + \
+-               '    return ("setosa", 0.9804)' + os.linesep + \
++               '    # return class setosa with probability 0.5000' + os.linesep + \
++               '    return ("setosa", 0.5000)' + os.linesep + \
+                '  else:  # if petal width (cm) > 0.8000' + os.linesep + \
+                '    if petal width (cm) <= 1.7500:' + os.linesep + \
+                '      if petal length (cm) <= 4.9500:' + os.linesep + \
+@@ -45,8 +45,8 @@ def test_print_decision_paths():
+                '        # return class virginica with probability 0.6667' + os.linesep + \
+                '        return ("virginica", 0.6667)' + os.linesep + \
+                '      else:  # if petal length (cm) > 4.8500' + os.linesep + \
+-               '        # return class virginica with probability 0.9773' + os.linesep + \
+-               '        return ("virginica", 0.9773)' + os.linesep
++               '        # return class virginica with probability 0.5000' + os.linesep + \
++               '        return ("virginica", 0.5000)' + os.linesep
+ 
+     assert result == expected
+ 
+@@ -64,8 +64,8 @@ def test_print_decision_paths_no_tree_name():
+ 
+     expected = 'def tree(petal width (cm), petal length (cm)):' + os.linesep + \
+                '  if petal width (cm) <= 0.8000:' + os.linesep + \
+-               '    # return class setosa with probability 0.9804' + os.linesep + \
+-               '    return ("setosa", 0.9804)' + os.linesep + \
++               '    # return class setosa with probability 0.5000' + os.linesep + \
++               '    return ("setosa", 0.5000)' + os.linesep + \
+                '  else:  # if petal width (cm) > 0.8000' + os.linesep + \
+                '    if petal width (cm) <= 1.7500:' + os.linesep + \
+                '      if petal length (cm) <= 4.9500:' + os.linesep + \
+@@ -79,8 +79,8 @@ def test_print_decision_paths_no_tree_name():
+                '        # return class virginica with probability 0.6667' + os.linesep + \
+                '        return ("virginica", 0.6667)' + os.linesep + \
+                '      else:  # if petal length (cm) > 4.8500' + os.linesep + \
+-               '        # return class virginica with probability 0.9773' + os.linesep + \
+-               '        return ("virginica", 0.9773)' + os.linesep
++               '        # return class virginica with probability 0.5000' + os.linesep + \
++               '        return ("virginica", 0.5000)' + os.linesep
+ 
+     assert result == expected
+ 
+@@ -96,8 +96,8 @@ def test_print_decision_paths_no_feature_names():
+ 
+     expected = 'def iris_tree(feature_3, feature_2):' + os.linesep + \
+                '  if feature_3 <= 0.8000:' + os.linesep + \
+-               '    # return class setosa with probability 0.9804' + os.linesep + \
+-               '    return ("setosa", 0.9804)' + os.linesep + \
++               '    # return class setosa with probability 0.5000' + os.linesep + \
++               '    return ("setosa", 0.5000)' + os.linesep + \
+                '  else:  # if feature_3 > 0.8000' + os.linesep + \
+                '    if feature_3 <= 1.7500:' + os.linesep + \
+                '      if feature_2 <= 4.9500:' + os.linesep + \
+@@ -111,8 +111,8 @@ def test_print_decision_paths_no_feature_names():
+                '        # return class virginica with probability 0.6667' + os.linesep + \
+                '        return ("virginica", 0.6667)' + os.linesep + \
+                '      else:  # if feature_2 > 4.8500' + os.linesep + \
+-               '        # return class virginica with probability 0.9773' + os.linesep + \
+-               '        return ("virginica", 0.9773)' + os.linesep
++               '        # return class virginica with probability 0.5000' + os.linesep + \
++               '        return ("virginica", 0.5000)' + os.linesep
+ 
+     assert result == expected
+ 
+@@ -130,8 +130,8 @@ def test_print_decision_paths_no_class_names():
+ 
+     expected = 'def iris_tree(petal width (cm), petal length (cm)):' + os.linesep + \
+                '  if petal width (cm) <= 0.8000:' + os.linesep + \
+-               '    # return class class_0 with probability 0.9804' + os.linesep + \
+-               '    return ("class_0", 0.9804)' + os.linesep + \
++               '    # return class class_0 with probability 0.5000' + os.linesep + \
++               '    return ("class_0", 0.5000)' + os.linesep + \
+                '  else:  # if petal width (cm) > 0.8000' + os.linesep + \
+                '    if petal width (cm) <= 1.7500:' + os.linesep + \
+                '      if petal length (cm) <= 4.9500:' + os.linesep + \
+@@ -145,8 +145,8 @@ def test_print_decision_paths_no_class_names():
+                '        # return class class_2 with probability 0.6667' + os.linesep + \
+                '        return ("class_2", 0.6667)' + os.linesep + \
+                '      else:  # if petal length (cm) > 4.8500' + os.linesep + \
+-               '        # return class class_2 with probability 0.9773' + os.linesep + \
+-               '        return ("class_2", 0.9773)' + os.linesep
++               '        # return class class_2 with probability 0.5000' + os.linesep + \
++               '        return ("class_2", 0.5000)' + os.linesep
+ 
+     assert result == expected
+ 
